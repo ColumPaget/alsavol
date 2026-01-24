@@ -19,7 +19,7 @@ TSoundCtl *SoundCardFindMasterControl(TSoundCard *Card, int Flags)
     TSoundCtl *Ctl=NULL, *Master=NULL;
     char *Tempstr=NULL, *Name=NULL;
 
-		Tempstr=MCopyStr(Tempstr, Card->Name, ":MasterVolume", NULL);
+    Tempstr=MCopyStr(Tempstr, Card->Name, ":MasterVolume", NULL);
     Name=CopyStr(Name, GetVar(AppConfig->CardSettings, Tempstr));
 
     Curr=ListGetNext(Card->Controls);
@@ -355,7 +355,7 @@ STREAM *DoLockFile()
 
 
 
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
     ListNode *Cards, *Curr;
     char *Tempstr=NULL;
@@ -364,10 +364,10 @@ main(int argc, char *argv[])
     ProcessApplyConfig("nosu mdwe security=untrusted");
 
     SelfPath=CopyStr(SelfPath, argv[0]);
-    
+
     ParseCommandLine(argc, argv);              //config file can be specified on the command-line, so parse args first
     ReadConfigFile(AppConfig->ConfigFile);     //now load config file..
-    Act=ParseCommandLine(argc, argv);          //now parse args again, as these override config file       
+    Act=ParseCommandLine(argc, argv);          //now parse args again, as these override config file
 
     if (! (AppConfig->Flags & FLAG_DEBUG)) ProcessApplyConfig("errnull");
     if (StrValid(AppConfig->LockFile)) DoLockFile();
@@ -391,4 +391,6 @@ main(int argc, char *argv[])
     }
 
     Destroy(Tempstr);
+
+    return(0);
 }

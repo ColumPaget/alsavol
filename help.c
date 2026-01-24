@@ -1,5 +1,10 @@
 #include "help.h"
 
+void PrintVersion()
+{
+printf("alsavol version: %s\n", PACKAGE_VERSION);
+exit(1);
+}
 
 void PrintHelp()
 {
@@ -33,6 +38,7 @@ void PrintHelp()
     printf("-lock <path>   path to lockfile\n");
     printf("-fg <color>    foreground text color\n");
     printf("-textcolor <color>    foreground text color\n");
+    printf("--version      print program version\n");
     printf("-?             this help\n");
     printf("-help          this help\n");
     printf("--help         this help\n");

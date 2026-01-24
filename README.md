@@ -221,7 +221,7 @@ GaugeTextColor=<color>
 DisplayName=<string>
 : Display <string> as the name of this sound card
 MasterVolume=<name>
-: The name of the 'real' volume control on this sound card is 'name' ("alsavol -p" gives a list of card and control names)
+: The name of the 'real' volume control on this sound card is 'name' ("alsavol -d" gives a list of card and control names)
 
 
 
@@ -241,7 +241,7 @@ There are a number of config-file and command-line settings that control which s
 CardOrder=*Corsair VOID*,*Headset,*
 ```
 
-Which would display cards in the order: Card with "Corsair VOID" in it's name, all cards ending in "Headset", then anyting else
+Which would display cards in the order: Card with "Corsair VOID" in it's name, all cards ending in "Headset", then anything else
 
 N.B. if the `*` is missed from the end of the card order, then the remaining cards will not be displayed.
 

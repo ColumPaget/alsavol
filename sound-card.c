@@ -69,6 +69,7 @@ void SoundCardDestroy(void *p_Card)
     {
         Destroy(Card->Name);
         Destroy(Card->NameHint);
+        Destroy(Card->DisplayName);
         ListDestroy(Card->Controls, SoundCtlDestroy);
         free(Card);
     }
@@ -300,6 +301,10 @@ TSoundCard *SoundCardCreate(ListNode *CardList, const char *ID, const char *Name
         Card->Name=CopyStr(Card->Name, Name);
         StripTrailingWhitespace(Card->Name);
 
+        Card->DisplayName=GetCardSetting(Card->DisplayName, Card->Name, "DisplayName");
+        if (! StrValid(Card->DisplayName)) Card->DisplayName=CopyStr(Card->DisplayName, Card->Name);
+
+
         SoundCardControlsGet(Card);
 
         if (AppConfig->Flags & FLAG_DEBUG) fprintf(stderr, "Card: [%s]\n", Card->Name);
@@ -357,45 +362,45 @@ void LoadConfigSoundCardControls(ListNode *CardList)
 
 void SoundCardsReorderCopyMatching(ListNode *Dest, ListNode *Src, const char *MatchPattern)
 {
-ListNode *Curr;
+    ListNode *Curr;
 
-Curr=ListGetNext(Src);
-while (Curr)
-{
+    Curr=ListGetNext(Src);
+    while (Curr)
+    {
 
-if ( 
-     pmatch_one(MatchPattern, Curr->Tag, StrLen(Curr->Tag), NULL, NULL, 0) &&
-     (! ListFindNamedItem(Dest, Curr->Tag))
-   ) 
-   ListAddNamedItem(Dest, Curr->Tag, Curr->Item);
+        if (
+            pmatch_one(MatchPattern, Curr->Tag, StrLen(Curr->Tag), NULL, NULL, 0) &&
+            (! ListFindNamedItem(Dest, Curr->Tag))
+        )
+            ListAddNamedItem(Dest, Curr->Tag, Curr->Item);
 
-Curr=ListGetNext(Curr);
-}
+        Curr=ListGetNext(Curr);
+    }
 
 }
 
 
 ListNode *SoundCardsReorder(ListNode *Cards)
 {
-ListNode *NewList;
-char *Token=NULL;
-const char *ptr;
+    ListNode *NewList;
+    char *Token=NULL;
+    const char *ptr;
 
-if (! StrValid(AppConfig->CardOrder)) return(Cards);
+    if (! StrValid(AppConfig->CardOrder)) return(Cards);
 
-NewList=ListCreate();
+    NewList=ListCreate();
 
-ptr=GetToken(AppConfig->CardOrder, ",", &Token, GETTOKEN_QUOTES);
-while (ptr)
-{
-SoundCardsReorderCopyMatching(NewList, Cards, Token);
-ptr=GetToken(ptr, ",", &Token, GETTOKEN_QUOTES);
-}
+    ptr=GetToken(AppConfig->CardOrder, ",", &Token, GETTOKEN_QUOTES);
+    while (ptr)
+    {
+        SoundCardsReorderCopyMatching(NewList, Cards, Token);
+        ptr=GetToken(ptr, ",", &Token, GETTOKEN_QUOTES);
+    }
 
-ListDestroy(Cards, NULL);
-Destroy(Token);
+    ListDestroy(Cards, NULL);
+    Destroy(Token);
 
-return(NewList);
+    return(NewList);
 }
 
 

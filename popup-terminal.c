@@ -78,7 +78,7 @@ STREAM *PopupTerminal_Display(const char *TerminalApps)
 {
     char *Tempstr=NULL, *TermExec=NULL, *Cmd=NULL, *Token=NULL;
     const char *ptr;
-		STREAM *S;
+    STREAM *S;
     int i;
 
     ptr=GetToken(TerminalApps, ",", &Token, 0);
@@ -108,10 +108,10 @@ STREAM *PopupTerminal_Display(const char *TerminalApps)
         printf("%s\n", Cmd);
         S=STREAMSpawnCommand(Cmd, "wr nostderr");
 
-				if (S)
-				{
-        WMCtrlReconfigureWindow(STREAMGetValue(S, "PeerPID"), AppConfig->Flags & ~DISPLAYFLAG_POSITION);
-				}
+        if (S)
+        {
+            WMCtrlReconfigureWindow(STREAMGetValue(S, "PeerPID"), AppConfig->Flags & ~DISPLAYFLAG_POSITION);
+        }
     }
 
     Destroy(Tempstr);

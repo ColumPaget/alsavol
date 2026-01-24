@@ -3,6 +3,6 @@
 
 #include "common.h"
 
-STREAM *PopupTerminal_Display();
+STREAM *PopupTerminal_Display(const char *TerminalApps);
 
 #endif

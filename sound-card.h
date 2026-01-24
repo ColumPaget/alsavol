@@ -13,6 +13,7 @@ typedef struct
 {
 char *ID;
 char *Name;
+char *DisplayName;
 char *NameHint;
 ListNode *Controls;
 } TSoundCard;

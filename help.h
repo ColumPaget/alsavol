@@ -3,6 +3,8 @@
 
 #include "common.h"
 
+
+void PrintVersion();
 void PrintHelp();
 
 

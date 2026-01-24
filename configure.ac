@@ -1,4 +1,4 @@
-AC_INIT([alsavol],[1.0])
+AC_INIT([alsavol],[1.1])
 
 
 dnl define a function we can use to check if a compiler flag

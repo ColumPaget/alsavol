@@ -9,7 +9,7 @@ static int WMCtrlGetDesktopAvailable(const char *WMCtrlPath, int *wide, int *hig
 {
     char *Tempstr=NULL, *Token=NULL, *Found=NULL;
     const char *ptr;
-		int RetVal=FALSE;
+    int RetVal=FALSE;
     STREAM *S;
 
     Tempstr=MCopyStr(Tempstr, WMCtrlPath, " -d", NULL);
@@ -38,22 +38,22 @@ static int WMCtrlGetDesktopAvailable(const char *WMCtrlPath, int *wide, int *hig
             Tempstr=STREAMReadLine(Tempstr, S);
         }
         STREAMClose(S);
-		}
+    }
 
-		if (StrValid(Found))
-		{
-			ptr=GetToken(Found, "x", &Token, 0);
-			*wide=atoi(Token);
-			ptr=GetToken(ptr, "x", &Token, 0);
-			*high=atoi(Token);
-			RetVal=TRUE;
-		}
+    if (StrValid(Found))
+    {
+        ptr=GetToken(Found, "x", &Token, 0);
+        *wide=atoi(Token);
+        ptr=GetToken(ptr, "x", &Token, 0);
+        *high=atoi(Token);
+        RetVal=TRUE;
+    }
 
     Destroy(Tempstr);
     Destroy(Found);
     Destroy(Token);
 
-return(RetVal);
+    return(RetVal);
 }
 
 
@@ -127,15 +127,15 @@ void WMCtrlReconfigureWindow(const char *PeerPID, int Flags)
 
         if (Flags & DISPLAYFLAG_POSITION)
         {
-						WMCtrlGetDesktopAvailable(WMCtrlPath, &deskwide, &deskhigh);
+            WMCtrlGetDesktopAvailable(WMCtrlPath, &deskwide, &deskhigh);
 
-						x=AppConfig->Xpos;
+            x=AppConfig->Xpos;
             wide=300;
-						if (x < 0) x=deskwide - wide - x - 4;
+            if (x < 0) x=deskwide - wide - x - 4;
 
-						y=AppConfig->Ypos;
-						high=100;
-						if (y < 0) y=deskhigh - high - y - 4;
+            y=AppConfig->Ypos;
+            high=100;
+            if (y < 0) y=deskhigh - high - y - 4;
 
             Tempstr=FormatStr(Tempstr, " -e 0,%d,%d,300,100", x, y);
             Cmd=CatStr(Cmd, Tempstr);

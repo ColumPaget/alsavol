@@ -79,19 +79,18 @@ STREAM *ZenityUI_Display(TSoundCard *Card, TSoundCtl *VolCtl, TSoundCtl *MuteCtl
 
     if (StrValid(Exec))
     {
-        Title=CopyStr(Title, Card->Name);
+        Title=CopyStr(Title, Card->DisplayName);
         if (MuteCtl && (MuteCtl->Values[0] == 0)) Title=CatStr(Title, "[MUTED]");
-
 
         Tempstr=FormatStr(Tempstr, "%s \"--title=alsavol\" \"--text=%s\" --scale --print-partial --ok-label=next --cancel-label=done --min-value=0 --max-value=100 --value=%d", Exec, Title, SoundCtlGetPercent(VolCtl));
         if (ExecType(Exec)==EXEC_TYPE_YAD)  Tempstr=ZenityUI_AppendYADOptions(Tempstr);
 
         S=STREAMSpawnCommand(Tempstr, "rw pty nostderr noshell");
-				if (S)
-				{
-        Tempstr=STREAMReadLine(Tempstr, S);
-        if (ExecType(Exec) != EXEC_TYPE_YAD) WMCtrlReconfigureWindow(STREAMGetValue(S, "PeerPID"), AppConfig->Flags);
-				}
+        if (S)
+        {
+            Tempstr=STREAMReadLine(Tempstr, S);
+            if (ExecType(Exec) != EXEC_TYPE_YAD) WMCtrlReconfigureWindow(STREAMGetValue(S, "PeerPID"), AppConfig->Flags);
+        }
     }
 
     Destroy(Tempstr);

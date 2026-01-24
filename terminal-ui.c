@@ -43,14 +43,14 @@ static int TerminalUI_ChooseDisplayStyle(STREAM *Term, int wide, int high)
 
 
 
-static char *TerminalUI_StyleTitles(char *ProgressBarSetup, STREAM *Term, int style, TSoundCard *Card, int TermWide, const char *DisplayName)
+static char *TerminalUI_StyleTitles(char *ProgressBarSetup, STREAM *Term, int style, TSoundCard *Card, int TermWide)
 {
     char *Title=NULL, *Tempstr=NULL;
 
 
     if (AppConfig->DisplayType == DISPLAYTYPE_X11)
     {
-        Title=MCopyStr(Title, "volume: ", DisplayName, NULL);
+        Title=MCopyStr(Title, "volume: ", Card->DisplayName, NULL);
         XtermSetTitle(Term, Title);
         TerminalClear(Term);
     }
@@ -59,7 +59,7 @@ static char *TerminalUI_StyleTitles(char *ProgressBarSetup, STREAM *Term, int st
 
     if (style == DISPLAYSTYLE_COMPACT)
     {
-        ProgressBarSetup=MCatStr(ProgressBarSetup, " innertext='", DisplayName, "'", NULL);
+        ProgressBarSetup=MCatStr(ProgressBarSetup, " innertext='", Card->DisplayName, "'", NULL);
         Tempstr=FormatStr(Tempstr, " width=%d", TermWide - 4);
         ProgressBarSetup=CatStr(ProgressBarSetup, Tempstr);
     }
@@ -71,8 +71,9 @@ static char *TerminalUI_StyleTitles(char *ProgressBarSetup, STREAM *Term, int st
     }
     else if (style == DISPLAYSTYLE_1LINE)
     {
-        ProgressBarSetup=MCatStr(ProgressBarSetup, " prompt='", AppConfig->TextColor, DisplayName, ":~0' innertext='$(percent)%'", NULL);
-        Tempstr=FormatStr(Tempstr, " width=%d", TermWide - StrLen(DisplayName) -4);
+        Title=CopyStrLen(Title, Card->DisplayName, TermWide - 10);
+        ProgressBarSetup=MCatStr(ProgressBarSetup, " prompt='", AppConfig->TextColor, Title, ":~0' innertext='$(percent)%'", NULL);
+        Tempstr=FormatStr(Tempstr, " width=%d", TermWide - StrLen(Title) -4);
         ProgressBarSetup=CatStr(ProgressBarSetup, Tempstr);
     }
     else
@@ -80,12 +81,12 @@ static char *TerminalUI_StyleTitles(char *ProgressBarSetup, STREAM *Term, int st
         ProgressBarSetup=MCatStr(ProgressBarSetup, " innertext='$(percent)%'", NULL);
         Tempstr=FormatStr(Tempstr, " width=%d", TermWide - 4);
         ProgressBarSetup=CatStr(ProgressBarSetup, Tempstr);
-        Title=MCopyStr(Title, "\n", DisplayName, "\n", NULL);
+        Title=MCopyStr(Title, "\n", Card->DisplayName, "\n", NULL);
         TerminalPutStr(Title, Term);
     }
 
-    Destroy(Title);
     Destroy(Tempstr);
+    Destroy(Title);
 
     return(ProgressBarSetup);
 }
@@ -93,17 +94,13 @@ static char *TerminalUI_StyleTitles(char *ProgressBarSetup, STREAM *Term, int st
 
 void TerminalUI_Update(STREAM *Term, TSoundCard *Card, TSoundCtl *VolCtl, TSoundCtl *MuteCtl)
 {
-    char *Tempstr=NULL, *Title=NULL, *Config=NULL, *DisplayName=NULL;
+    char *Tempstr=NULL, *Title=NULL, *Config=NULL;
     TERMPROGRESS *TP;
     int wide, high;
     int val, style;
 
     TerminalGeometry(Term, &wide, &high);
     style=TerminalUI_ChooseDisplayStyle(Term, wide, high);
-
-		DisplayName=GetCardSetting(DisplayName, Card->Name, "DisplayName");
-		if (! StrValid(DisplayName)) DisplayName=CopyStr(DisplayName, Card->Name);
-
 
     if ((! MuteCtl) || (MuteCtl->Values[0] > 0))
     {
@@ -124,7 +121,7 @@ void TerminalUI_Update(STREAM *Term, TSoundCard *Card, TSoundCtl *VolCtl, TSound
             }
         }
 
-        Config=TerminalUI_StyleTitles(Config, Term, style, Card, wide, DisplayName);
+        Config=TerminalUI_StyleTitles(Config, Term, style, Card, wide);
 
         TP=TerminalProgressCreate(Term, Config);
         val=VolCtl->Values[0] * 100 / VolCtl->Max;
@@ -135,13 +132,12 @@ void TerminalUI_Update(STREAM *Term, TSoundCard *Card, TSoundCtl *VolCtl, TSound
     }
     else
     {
-        Tempstr=FormatStr(Tempstr, "\r%s: ~rMUTED~0~>", DisplayName);
+        Tempstr=FormatStr(Tempstr, "\r%s: ~rMUTED~0~>", Card->DisplayName);
         TerminalPutStr(Tempstr, Term);
     }
 
     STREAMFlush(Term);
 
-    Destroy(DisplayName);
     Destroy(Tempstr);
     Destroy(Config);
     Destroy(Title);
@@ -156,7 +152,7 @@ int TerminalUI_HandleInput(STREAM *Term, int *Value)
     inchar=TerminalReadChar(Term);
     switch (inchar)
     {
-		case -1:
+    case -1:
     case TKEY_ESCAPE:
     case TKEY_DELETE:
     case TKEY_BACKSPACE:

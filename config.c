@@ -83,10 +83,10 @@ static void ReadConfigFileParseSettings(ListNode *Settings)
     const char *p_Value;
 
 
-		//This appends to existing card ignore list, so we do not need to check if it's blank or not
+    //This appends to existing card ignore list, so we do not need to check if it's blank or not
     AppConfig->CardIgnoreList=CatStr(AppConfig->CardIgnoreList, ParserGetValue(Settings, "IgnoreCards"));
 
-		//As these have no default, so we don't need to check if the values was supplied in settings
+    //As these have no default, so we don't need to check if the values was supplied in settings
     //as there is no default we are going to override
     AppConfig->CardOrder=CopyStr(AppConfig->CardOrder, ParserGetValue(Settings, "CardOrder"));
     AppConfig->LockFile=CopyStr(AppConfig->LockFile, ParserGetValue(Settings, "LockFile"));
@@ -136,23 +136,23 @@ static void ReadConfigFileParseSettings(ListNode *Settings)
 
 static void ReadConfigFileParseCardSetting(ListNode *Settings, const char *CardName, const char *SettingName)
 {
-		char *Tempstr=NULL;
+    char *Tempstr=NULL;
     const char *p_Value;
 
     p_Value=ParserGetValue(Settings, SettingName);
-		if (StrValid(p_Value))
-		{
-		Tempstr=MCopyStr(Tempstr, CardName, ":", SettingName, NULL);
-    SetVar(AppConfig->CardSettings, Tempstr, p_Value);
-		}
+    if (StrValid(p_Value))
+    {
+        Tempstr=MCopyStr(Tempstr, CardName, ":", SettingName, NULL);
+        SetVar(AppConfig->CardSettings, Tempstr, p_Value);
+    }
 
-Destroy(Tempstr);
+    Destroy(Tempstr);
 }
 
 static void ReadConfigFileParseCard(ListNode *Settings, const char *CardName)
 {
-ReadConfigFileParseCardSetting(Settings, CardName, "DisplayName");
-ReadConfigFileParseCardSetting(Settings, CardName, "MasterVolume");
+    ReadConfigFileParseCardSetting(Settings, CardName, "DisplayName");
+    ReadConfigFileParseCardSetting(Settings, CardName, "MasterVolume");
 }
 
 
@@ -175,7 +175,7 @@ int ReadConfigFile(const char *Path)
         while (Curr)
         {
             if (CompareStr(Curr->Tag, "Settings")==0) ReadConfigFileParseSettings((ListNode *) Curr->Item);
-            else ReadConfigFileParseCard((ListNode *) Curr->Item, Curr->Tag);
+            else ReadConfigFileParseCard((ListNode *) Curr, Curr->Tag);
             Curr=ListGetNext(Curr);
         }
     }
@@ -238,15 +238,16 @@ int ParseCommandLine(int argc, char *argv[])
         else if (strcmp(arg, "-l")==0) AppConfig->LockFile=CopyStr(AppConfig->LockFile, CommandLineNext(Cmd));
         else if (strcmp(arg, "-lock")==0) AppConfig->LockFile=CopyStr(AppConfig->LockFile, CommandLineNext(Cmd));
         else if (strcmp(arg, "-class")==0) AppConfig->WindowClass=CopyStr(AppConfig->WindowClass, CommandLineNext(Cmd));
-    		else if (strcmp(arg, "-order")==0) AppConfig->CardOrder=CopyStr(AppConfig->CardOrder, CommandLineNext(Cmd));
-    		else if (strcmp(arg, "-O")==0) AppConfig->CardOrder=CopyStr(AppConfig->CardOrder, CommandLineNext(Cmd));
-    		else if (strcmp(arg, "-ignore")==0) AppConfig->CardIgnoreList=CopyStr(AppConfig->CardIgnoreList, CommandLineNext(Cmd));
-    		else if (strcmp(arg, "-I")==0) AppConfig->CardIgnoreList=CopyStr(AppConfig->CardIgnoreList, CommandLineNext(Cmd));
+        else if (strcmp(arg, "-order")==0) AppConfig->CardOrder=CopyStr(AppConfig->CardOrder, CommandLineNext(Cmd));
+        else if (strcmp(arg, "-O")==0) AppConfig->CardOrder=CopyStr(AppConfig->CardOrder, CommandLineNext(Cmd));
+        else if (strcmp(arg, "-ignore")==0) AppConfig->CardIgnoreList=CopyStr(AppConfig->CardIgnoreList, CommandLineNext(Cmd));
+        else if (strcmp(arg, "-I")==0) AppConfig->CardIgnoreList=CopyStr(AppConfig->CardIgnoreList, CommandLineNext(Cmd));
         else if (strcmp(arg, "-D")==0) AppConfig->Flags |= FLAG_DEBUG;
         else if (strcmp(arg, "-debug")==0) AppConfig->Flags |= FLAG_DEBUG;
         else if (strcmp(arg, "-?")==0) PrintHelp();
         else if (strcmp(arg, "-help")==0) PrintHelp();
         else if (strcmp(arg, "--help")==0) PrintHelp();
+        else if (strcmp(arg, "--version")==0) PrintVersion();
 
         arg=CommandLineNext(Cmd);
     }
@@ -258,12 +259,12 @@ int ParseCommandLine(int argc, char *argv[])
 
 char *GetCardSetting(char *RetStr, const char *CardName, const char *Setting)
 {
-char *Tempstr=NULL;
+    char *Tempstr=NULL;
 
-Tempstr=MCopyStr(Tempstr, CardName, ":", Setting, NULL);
-RetStr=CopyStr(RetStr, GetVar(AppConfig->CardSettings, Tempstr));
+    Tempstr=MCopyStr(Tempstr, CardName, ":", Setting, NULL);
+    RetStr=CopyStr(RetStr, GetVar(AppConfig->CardSettings, Tempstr));
 
-Destroy(Tempstr);
+    Destroy(Tempstr);
 
-return(RetStr);
+    return(RetStr);
 }

@@ -7,7 +7,7 @@ static char *TCLWishFormatPosition(char *RetStr, int x, int y)
 
     if (AppConfig->Flags & DISPLAYFLAG_POSITION)
     {
-    		RetStr=CatStr(RetStr, " -geometry ");
+        RetStr=CatStr(RetStr, " -geometry ");
         if (x > 0) Tempstr=FormatStr(Tempstr, "+%d", x);
         else Tempstr=FormatStr(Tempstr, "%d", x);
         RetStr=CatStr(RetStr, Tempstr);
@@ -33,8 +33,8 @@ STREAM *TCLWishUI_Display(TSoundCard *Card, TSoundCtl *VolCtl, TSoundCtl *MuteCt
 
     if (StrValid(Exec))
     {
-				Tempstr=FormatStr(Tempstr, "%s -name 'alsavol ppid=%lu'", Exec, (unsigned long) getpid());
-				Tempstr=TCLWishFormatPosition(Tempstr, AppConfig->Xpos, AppConfig->Ypos);
+        Tempstr=FormatStr(Tempstr, "%s -name 'alsavol ppid=%lu'", Exec, (unsigned long) getpid());
+        Tempstr=TCLWishFormatPosition(Tempstr, AppConfig->Xpos, AppConfig->Ypos);
 
         S=STREAMSpawnCommand(Tempstr, "rw nostderr");
         if (S)
@@ -44,7 +44,7 @@ STREAM *TCLWishUI_Display(TSoundCard *Card, TSoundCtl *VolCtl, TSoundCtl *MuteCt
             Cmd=CatStr(Cmd, "proc OutputNext {} {puts stdout \"next\"}\n");
             Cmd=CatStr(Cmd, "proc OutputDone {} {puts stdout \"done\"}\n");
             Cmd=MCatStr(Cmd, "set card_name \"", Card->Name, "\"\n", NULL);
-        		percent=VolCtl->Values[0] * 100 / VolCtl->Max;
+            percent=VolCtl->Values[0] * 100 / VolCtl->Max;
             Tempstr=FormatStr(Tempstr, "set volume %d\n", percent);
             Cmd=CatStr(Cmd, Tempstr);
             Cmd=CatStr(Cmd, "label .card_name -text \"$card_name\"\n");
@@ -53,12 +53,13 @@ STREAM *TCLWishUI_Display(TSoundCard *Card, TSoundCtl *VolCtl, TSoundCtl *MuteCt
             Cmd=CatStr(Cmd, "button .next -text Next -command OutputNext\n");
             Cmd=CatStr(Cmd, "button .done -text Done -command OutputDone\n");
             Cmd=CatStr(Cmd, "pack .card_name\npack .volume_scale\npack .mute .next .done -side left\n");
+
             STREAMWriteLine(Cmd, S);
             TCLWishUI_Update(S, Card, VolCtl, MuteCtl);
 
             STREAMFlush(S);
 
-    		    WMCtrlReconfigureWindow(STREAMGetValue(S, "PeerPID"), AppConfig->Flags & ~DISPLAYFLAG_POSITION);
+            WMCtrlReconfigureWindow(STREAMGetValue(S, "PeerPID"), AppConfig->Flags & ~DISPLAYFLAG_POSITION);
         }
     }
 
@@ -73,12 +74,16 @@ STREAM *TCLWishUI_Display(TSoundCard *Card, TSoundCtl *VolCtl, TSoundCtl *MuteCt
 STREAM *TCLWishUI_Update(STREAM *S, TSoundCard *Card, TSoundCtl *VolCtl, TSoundCtl *MuteCtl)
 {
     char *Tempstr=NULL;
+    int percent;
 
-    Tempstr=MCopyStr(Tempstr, ".card_name configure -text \"", Card->Name, "\"\n", NULL);
+    Tempstr=MCopyStr(Tempstr, ".card_name configure -text \"", Card->DisplayName, "\"\n", NULL);
     STREAMWriteLine(Tempstr, S);
 
     if (! MuteCtl->Values[0]) Tempstr=CopyStr(Tempstr, ".mute configure -foreground red\n");
     else Tempstr=CopyStr(Tempstr, ".mute configure -foreground black\n");
+
+    percent=VolCtl->Values[0] * 100 / VolCtl->Max;
+    Tempstr=FormatStr(Tempstr, "set volume %d\n", percent);
 
     STREAMWriteLine(Tempstr, S);
     STREAMFlush(S);
