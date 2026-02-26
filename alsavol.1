@@ -1,0 +1,640 @@
+.TH  alsavol  1 "27 May 2025"
+
+.SH SYNOPSIS
+
+.PP
+alsavol - Change alsa volume with a single slider
+.SH DESCRIPTION
+
+.PP
+\fBalsavol\fP is a simple ALSA volume control (\(aqsimple\(aq as in a single slider). It works either at the terminal, or using \(aqdialog\(aq apps like zenity, qarma and yad, or using the TCL/Tk \(aqwish\(aq shell. It can also popup an x11 terminal containing itself using urxvt, xterm, mlterm, or st. It can be configured to know which sound-card on the system is relevant, or just to change volume of all cards simultaneously.
+.SH AUTHOR
+
+.PP
+\fBalsavol\fP is Copyright (C) 2025 Colum Paget. It\(aqs released under the GPLv3 so you may do anything with them that the GPLv3 allows.
+.PP
+Email: colums.projects@gmail.com
+.SH USAGE
+
+.nf
+.ft CW
+
+.RS
+.EX
+
+alsavol [options]
+.RE
+.EE
+.fi
+.in
+.ad b
+.nop  
+.SH OPTIONS
+
+.PP
+.in +2
+
+.TP
+.B -d
+print a list of available devices and their controls
+
+.TP
+.B -f <path>
+path to config file
+
+.TP
+.B -config <path>
+path to config file
+
+.TP
+.B -c
+specify target sound card (see 'Card Order' below)
+
+.TP
+.B -card
+specify target sound card (see 'Card Order' below)
+
+.TP
+.B -D
+debug mode, output some errors etc
+
+.TP
+.B -debug
+debug mode, output some errors etc
+
+.TP
+.B -set <level>
+set volume level
+
+.TP
+.B -all
+apply volume change to all sound cards
+
+.TP
+.B -delta <value>
+APPROXIMATE percentage to increase/decrease volume with up/down buttons
+
+.TP
+.B -t <type>
+display type, one of 'term', 'dialog', 'zenity', 'qarma', 'yad', 'wish', 'pterm'
+
+.TP
+.B -T <apps>
+force display type to be 'pterm'. 'apps' is a comma-separated list of terminal apps to use. e.g. 'alsavol -T kterm,kitty,aterm,xterm'
+
+.TP
+.B -term <apps>
+force display type to be 'pterm'. 'apps' is a comma-separated list of terminal apps to use. e.g. 'alsavol -T kterm,kitty,aterm,xterm'
+
+.TP
+.B -s <name>
+display style, one of 'basic', '1line', '2line', 'compact' and 'pterm'
+
+.TP
+.B -style <name>
+display style, one of 'basic', '1line', '2line', 'compact' and 'pterm'
+
+.TP
+.B -x <pos>
+x-position of display window for pterm, wish and yad windows
+
+.TP
+.B -y <pos>
+y-position of display window for pterm, wish and yad windows
+
+.TP
+.B -w <value>
+width in character cells for pterm windows
+
+.TP
+.B -wide <value>
+width in character cells for pterm windows
+
+.TP
+.B -h <value>
+height in character cells for pterm windows
+
+.TP
+.B -high <value>
+height in character cells for pterm windows
+
+.TP
+.B -tr
+transparent background: only for 'pterm' displays using urxvt, st, mlterm or aterm
+
+.TP
+.B -bl
+borderless: only for 'pterm' displays using st, mlterm or aterm
+
+.TP
+.B -above
+set window to be above other windows
+
+.TP
+.B -p
+persist. Respawn if window is closed, mostly for use with pterm display type
+
+.TP
+.B -persist
+persist. Respawn if window is closed, mostly for use with pterm display type
+
+.TP
+.B -hotkey <key>
+popup hotkey for use with the 'urxvt' display type
+
+.TP
+.B -font <name>
+font to use with pterm displays
+
+.TP
+.B -fn <name>
+font to use with pterm displays
+
+.TP
+.B -class <name>
+window class (used to configure window-related settings in window-manager)
+
+.TP
+.B -l <path>
+path to lockfile, used to ensure only one alsavol is active at a time
+
+.TP
+.B -lock <path>
+path to lockfile, used to ensure only one alsavol is active at a time
+
+.TP
+.B -fg <color>
+foreground text color
+
+.TP
+.B -textcolor <color>
+foreground text color
+
+.TP
+.B --version
+output program version
+
+.TP
+.B -?
+this help
+
+.TP
+.B -help
+this help
+
+.TP
+.B --help
+this help
+.in
+
+.SH CONFIG FILE
+
+.PP
+The config file is \(aqini\(aq file. It has a main stanza called \(aqsettings\(aq and contains global configurations. Every other stanza has the name of a sound device, and contains settings relevant to that device.
+.PP
+For example:
+.nf
+.ft CW
+
+.RS
+.EX
+
+[Settings]
+DisplayType=wish
+PopupFlags=above,sticky
+WindowX=\-1
+WindowY=\-1
+
+[HDA Intel PCH]
+DisplayName=Intel HDA
+
+[Corsair VOID ELITE USB Gaming H]
+DisplayName=Corsair Void Elite
+MasterVolume=Headset Playback Volume 1
+.RE
+.EE
+.fi
+.in
+.ad b
+.nop  
+.PP
+This config file will create a popup control window at the bottom right corner of the screen using the \(aqwish\(aq TCL/TK system. Two sound devices are recognized, both given tidier names than their default ALSA name, and the Corsair Void Elite headphones have their master volume declared to be \(aqHeadset Playback Volume 1\(aq (there is also \(aqHeadset Playback Volume 0\(aq, which as far as I can tell has no effect on playback volume, and perhaps controls sidetone or some such thing).
+.SS Options in the Settings Stanza of the config file
+ 
+.PP
+.in +2
+
+.TP
+.B IgnoreCards=<list>
+do not display any sound cards in comma-separated list <list> (see 'Card Order' below)
+.in
+
+.PP
+.in +2
+
+.TP
+.B CardOrder=<list>
+display sound cards in comma-separated list <list>, in the order they are listed (see 'Card Order' below)
+.in
+
+.PP
+.in +2
+
+.TP
+.B DisplayType=<name>
+type of GUI display to use, values are: term,pterm,dialog,wish,zenity,qarma,yad,urxvt
+.in
+
+.PP
+.in +2
+
+.TP
+.B DisplayStyle=<name>
+style of display to use for 'term' and 'pterm' display types, values are: 'basic', '1line', '2line', 'compact' and 'pterm'
+.in
+
+.PP
+.in +2
+
+.TP
+.B WindowX=<pos>
+x position of window for pterm, wish, dialog, etc display types
+.in
+
+.PP
+.in +2
+
+.TP
+.B WindowY=<pos>
+y position of window for pterm, wish, dialog, etc display types
+.in
+
+.PP
+.in +2
+
+.TP
+.B WindowClass=<class>
+'class' of X11 window. Used to hint to window manager so that it can treat the window in specific ways.
+.in
+
+.PP
+.in +2
+
+.TP
+.B LockFile=<path>
+<path> to lock file used to prevent multiple copies of alsavol being launched. Useful with popup display types where the window is already displayed.
+.in
+
+.PP
+.in +2
+
+.TP
+.B TerminalApp=<name>
+x11 terminal app to use with DisplayType pterm, this can be a comma-separated list of apps, and the first one found will be used
+.in
+
+.PP
+.in +2
+
+.TP
+.B PopupHotKey=<key>
+hotkey to be used with urxvt 'kuake' mode. urxvt does not support modifiers, so this can only be a keyname like 'F1'
+.in
+
+.PP
+.in +2
+
+.TP
+.B PopupFlags=<list>
+comma-separated list of the following strings: 'above', 'sticky', 'transparent', 'tr', 'borderless', 'bl'. See 'window settings' below.
+.in
+
+.PP
+.in +2
+
+.TP
+.B Font=<name>
+font to use with 'pterm' display type
+.in
+
+.PP
+.in +2
+
+.TP
+.B TextColor=<color>
+color for text section of terminal output: this can be a 16-color name like 'red', 'blue' or a 'tilde identifier' like ~r, ~b.
+.in
+
+.PP
+.in +2
+
+.TP
+.B GaugeBarColor=<color>
+color for gauge/slider bar part of terminal output: this can be a 16-color name like 'red', 'blue' or a 'tilde identifier' like ~r, ~b.
+.in
+
+.PP
+.in +2
+
+.TP
+.B GaugeTextColor=<color>
+color for text overlaid over the gauge/slider bar part of terminal output: this can be a 16-color name like \(aqred\(aq, \(aqblue\(aq or a \(aqtilde identifier\(aq like r, b.
+.in
+
+.SS Options in a Sound card Stanza of the config file
+ 
+.PP
+.in +2
+
+.TP
+.B DisplayName=<string>
+Display <string> as the name of this sound card
+
+.TP
+.B MasterVolume=<name>
+The name of the \(aqreal\(aq volume control on this sound card is \(aqname\(aq ("alsavol -p" gives a list of card and control names)
+.in
+
+.SH DISPLAY SYSTEMS
+
+.PP
+\fBalsavol\fP supports several display types selected using the \(aq-t\(aq option or \(aqDisplayType\(aq config file entry. These are:
+.PP
+.in +2
+
+.TP
+.B term
+display in terminal
+
+.TP
+.B dialog
+display using whichever of zenity, qarma or yad is found on the system
+
+.TP
+.B zenity
+display using the \(aqzenity\(aq dialog application
+
+.TP
+.B qarma
+display using the \(aqqarma\(aq dialog application
+
+.TP
+.B yad
+display using the \(aqyad\(aq dialog application
+
+.TP
+.B wish
+display using the tcl \(aqwish\(aq shell
+
+.TP
+.B pterm
+display using a popup terminal using one of urxvt, xterm, aterm, mlterm or st
+
+.TP
+.B urxvt
+display using a \(aqurxvt\(aq as a popup window
+.in
+
+.PP
+alsavol\(aqs default behavior is to display a slider bar in the terminal/console. This slider can be moved using keys or the mousewheel. 
+.PP
+If \(aqdialog\(aq. \(aqzenity\(aq, \(aqqarma\(aq, \(aqyad\(aq or \(aqwish\(aq modes are used then a popup window is created using one of those applications. Keystrokes listed below in \(aqTERMINAL KEYS\(aq are not honored in these modes, and the resulting display is entirely controlled by the dialog system. 
+.PP
+\(aqpterm\(aq and \(aqurxvt\(aq are modes where alsavol displays itself within a dedicated terminal window. In this mode \(aqTERMINAL KEYS\(aq are honored, and there are some unique options, like urxvt\(aqs \(aqkuake hotkey\(aq feature.
+.SH TERMINAL KEYS
+
+.PP
+In \(aqterm\(aq or \(aqpterm\(aq mode alsavol is controlable with the following keys
+.nf
+.ft CW
+
+.RS
+.EX
+
+decrease volume:
+  * left arrow
+  * <
+  * ,
+  * \-
+  * mousewheel 
+
+increase volume:
+  * right arrow
+  * >
+  * .
+  * +
+  * mousewheel 
+
+next sound card:
+  * tab
+  * home
+  * down arrow
+  * ]
+  * n
+
+prev sound card:
+  * up arrow
+  * [
+  * p
+
+mute:
+  * m
+
+exit app:
+  * q
+  * escape
+  * delete
+  * backspace
+  * end
+.RE
+.EE
+.fi
+.in
+.ad b
+.nop  
+.PP
+The \(aqvolume up\(aq, \(aqvolume down\(aq and \(aqmute\(aq media keys may also be honored.
+.SH CARD ORDER
+
+.PP
+There are a number of config-file and command-line settings that control which sound-cards are displayed, and in what order. These are applied at different stages of processing the sound-card list.
+.PP
+.in +2
+
+.TP
+.B \(aqIgnoreCards\(aq or \(aq-ignore\(aq or \(aq-I\(aq
+This is a comma-separated list of cards to ignore. It\(aqs applied when we gather a list of cards from the ALSA API. \fBalsavol\fP already has an internal list of card names to ignore, consisting of "hw,oss,shm,arcam_av,sysdefault,default" and the user-supplied names are added to this ignore list.
+.in
+
+.PP
+.in +2
+
+.TP
+.B \(aqCardOrder\(aq or \(aq-order\(aq or \(aq-O\(aq
+This is a comma-separated list of shell-style pattern matches that allows setting the order in which cards are displayed to the user. If a card is not listed in this order then it is not displayed, which is another way to ignore a card. And Example of use might be:
+.in
+
+.nf
+.ft CW
+
+.RS
+.EX
+
+CardOrder=*Corsair VOID*,*Headset,*
+.RE
+.EE
+.fi
+.in
+.ad b
+.nop  
+.PP
+Which would display cards in the order: Card with "Corsair VOID" in it\(aqs name, all cards ending in "Headset", then anything else
+.PP
+N.B. if the 
+.na
+
+.nf
+.ft CW
+*
+.fi
+.ft P
+
+.ad n
+.nop is missed from the end of the card order, then the remaining cards will not be displayed.
+.PP
+There is also the 
+.na
+
+.nf
+.ft CW
+\-c
+.fi
+.ft P
+
+.ad n
+.nop and 
+.na
+
+.nf
+.ft CW
+\-card
+.fi
+.ft P
+
+.ad n
+.nop command-line options. These are exclusively used with the \(aq-set\(aq option to set the value of a device\(aqs volume level without displaying a user interface. They take either a full ALSA card name, or a card index (\(aq0\(aq for the first card).
+.SH WINDOW SETTINGS
+
+.PP
+Different display types support windows that \(aqstick to desktop\(aq or are transparent, or borderless. Some of these features are natively supported by the applications, while others are set using the \(aqwmctrl\(aq command-line application, and will not work if that\(aqs not installed. These features are activated using \(aqPopupFlags\(aq in the config file, or by individual options on the command-line. The available features are:
+.PP
+.in +2
+
+.TP
+.B above
+keep window above all other windows, supported using 
+.na
+
+.nf
+.ft CW
+wmctrl
+.fi
+.ft P
+
+.ad n
+.nop for all display types (except obviously terminal)
+.in
+
+.PP
+.in +2
+
+.TP
+.B sticky
+keep window above all other windows, supported using 
+.na
+
+.nf
+.ft CW
+wmctrl
+.fi
+.ft P
+
+.ad n
+.nop for all display types (except obviously terminal)
+.in
+
+.PP
+.in +2
+
+.TP
+.B transparent
+give window a pseudo-transparent background. Supported for \(aqpterm\(aq display type with terminals mlterm, aterm, and urxvt
+.in
+
+.PP
+.in +2
+
+.TP
+.B tr
+short name for \(aqtransparent\(aq
+.in
+
+.PP
+.in +2
+
+.TP
+.B borderless
+display window without the usual window-manager title bar and border. Supported for \(aqpterm\(aq display type with terminals aterm, mlterm but not urxvt due to a bug in urxvt that makes borderless windows \(aqno input\(aq
+.in
+
+.PP
+.in +2
+
+.TP
+.B bl
+short name for \(aqborderless\(aq
+.in
+
+.SH WINDOW STYLES
+
+.PP
+The \(aq-style\(aq command-line option and \(aqWindowStyle\(aq config setting select a display style for the \(aqterm\(aq and \(aqpterm\(aq display types. Available styles are:
+.PP
+.in +2
+
+.TP
+.B basic
+a 2-line display style where the control slider is displayed under the card name
+.in
+
+.PP
+.in +2
+
+.TP
+.B 2line
+another name for \(aqbasic\(aq style
+.in
+
+.PP
+.in +2
+
+.TP
+.B 1line
+a compact style where everything is displayed on 1 line, with the card name before the control slider
+.in
+
+.PP
+.in +2
+
+.TP
+.B compact
+a compact style where everything is displayed on 1 line, with the card name overlaid on the control slider
+.in
+
+.PP
+.in +2
+
+.TP
+.B pterm
+a style where the card name is not displayed, usually used for \(aqpterm\(aq display types, where the card name is instead set as the window title
+.in

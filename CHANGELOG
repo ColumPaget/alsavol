@@ -1,3 +1,11 @@
+v1.2 (2026-02-26)
+  * add manpage that got lost when 'git push' happened
+  * prefer aterm over urxvt in 'pterm' mode
+  * fix possible crash-on-exit
+  * support terminal types for individual terminals
+	* -T/-term now implies '-t pterm'
+  * added '-delta' command-line argument
+
 v1.1 (2026-01-24)
   * handle 'long soundcard names' in 1-line terminal mode
   * honor 'card display name' setting in all display modes

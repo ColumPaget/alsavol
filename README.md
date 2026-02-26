@@ -112,8 +112,10 @@ COMMAND LINE OPTIONS
 -debug         debug mode, output some errors etc
 -set <level>   set volume level
 -all           apply volume change to all sound cards
+-delta <value> APPROXIMATE percentage to increase/decrease volume with up/down buttons
 -t <type>      display type, one of 'term', 'dialog', 'zenity', 'qarma', 'yad', 'wish', 'pterm'
--term <type>   terminal app to use with 'pterm' display type
+-T <apps>   force display type to be 'pterm'. 'apps' is a comma-separated list of terminal apps to use. e.g. 'alsavol -T kterm,kitty,aterm,xterm'
+-term <apps>   force display type to be 'pterm'. 'apps' is a comma-separated list of terminal apps to use. e.g. 'alsavol -T kterm,kitty,aterm,xterm'
 -s <name>      display style, one of 'basic', '1line', '2line', 'compact' and 'pterm'
 -style <name>  display style, one of 'basic', '1line', '2line', 'compact' and 'pterm'
 -x <pos>       x-position of display window for pterm, wish and yad windows
@@ -213,6 +215,9 @@ GaugeBarColor=<color>
 
 GaugeTextColor=<color>
 : color for text overlaid over the gauge/slider bar part of terminal output: this can be a 16-color name like 'red', 'blue' or a 'tilde identifier' like ~r, ~b. 
+
+VolumeDelta=<value>
+: APPROXIMATE percentage to increase/decrease volume with up/down buttons
 
 
 

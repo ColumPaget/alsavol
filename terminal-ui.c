@@ -55,7 +55,8 @@ static char *TerminalUI_StyleTitles(char *ProgressBarSetup, STREAM *Term, int st
         TerminalClear(Term);
     }
 
-    if (TermWide > AppConfig->WindowWide) TermWide=AppConfig->WindowWide;
+    if ((TermWide == 0) || TermWide > AppConfig->WindowWide) TermWide=AppConfig->WindowWide;
+		if (TermWide==0) TermWide=40;
 
     if (style == DISPLAYSTYLE_COMPACT)
     {

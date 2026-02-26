@@ -2,6 +2,10 @@
 OBJ=config.o help.o sound-card.o ui.o terminal-ui.o zenity-ui.o wmctrl.o tclwish-ui.o popup-terminal.o
 LIBS=@LIBS@
 FLAGS=-g @CFLAGS@ @DEFS@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+bindir=@bindir@
+mandir=@mandir@
 
 all: $(OBJ) @LIBUSEFUL_BUNDLED@
 	gcc $(FLAGS) -o alsavol $(OBJ) main.c $(LIBS) @LIBUSEFUL_BUNDLED@
@@ -39,6 +43,12 @@ tclwish-ui.o:tclwish-ui.h tclwish-ui.c
 popup-terminal.o:popup-terminal.h popup-terminal.c
 	gcc $(FLAGS) -c popup-terminal.c
 
+
+install:
+	mkdir -p $(bindir)/
+	cp -f alsavol $(bindir)/
+	mkdir -p $(mandir)/man1
+	cp alsavol.1 $(mandir)/man1
 
 
 

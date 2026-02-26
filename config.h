@@ -25,6 +25,7 @@ typedef enum {DISPLAYTYPE_TERMINAL, DISPLAYTYPE_DIALOG, DISPLAYTYPE_X11, DISPLAY
 typedef struct
 {
 int VolumeLevel;
+int VolumeDelta;
 int DisplayType;
 int DisplayStyle;
 int Flags;

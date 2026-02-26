@@ -1,10 +1,14 @@
 
 OBJ=config.o help.o sound-card.o ui.o terminal-ui.o zenity-ui.o wmctrl.o tclwish-ui.o popup-terminal.o
-LIBS=-lUseful-5 -lasound 
-FLAGS=-g -g -O2 -DPACKAGE_NAME=\"alsavol\" -DPACKAGE_TARNAME=\"alsavol\" -DPACKAGE_VERSION=\"1.1\" -DPACKAGE_STRING=\"alsavol\ 1.1\" -DPACKAGE_BUGREPORT=\"\" -DPACKAGE_URL=\"\" -DHAVE_STDIO_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_STRINGS_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_UNISTD_H=1 -DSTDC_HEADERS=1 -D_FILE_OFFSET_BITS=64 -DHAVE_LIBASOUND=1 -DHAVE_LIBUSEFUL_5_LIBUSEFUL_H=1 -DHAVE_LIBUSEFUL_5=1
+LIBS=-lasound 
+FLAGS=-g -g -O2 -fstack-protector-strong -fstack-clash-protection -fno-strict-overflow -fno-strict-aliasing -fno-delete-null-pointer-checks -fcf-protection=full -DPACKAGE_NAME=\"alsavol\" -DPACKAGE_TARNAME=\"alsavol\" -DPACKAGE_VERSION=\"1.2\" -DPACKAGE_STRING=\"alsavol\ 1.2\" -DPACKAGE_BUGREPORT=\"\" -DPACKAGE_URL=\"\" -D_FILE_OFFSET_BITS=64 -DHAVE_LIBASOUND=1 -DUSE_LIBUSEFUL_BUNDLED=1
+prefix=/usr/local
+exec_prefix=${prefix}
+bindir=${exec_prefix}/bin
+mandir=${prefix}/share/man
 
-all: $(OBJ) 
-	gcc $(FLAGS) -o alsavol $(OBJ) main.c $(LIBS) 
+all: $(OBJ) libuseful-bundled/libUseful.a
+	gcc $(FLAGS) -o alsavol $(OBJ) main.c $(LIBS) libuseful-bundled/libUseful.a
 
 
 libuseful-bundled/libUseful.a:
@@ -39,6 +43,12 @@ tclwish-ui.o:tclwish-ui.h tclwish-ui.c
 popup-terminal.o:popup-terminal.h popup-terminal.c
 	gcc $(FLAGS) -c popup-terminal.c
 
+
+install:
+	mkdir -p $(bindir)/
+	cp -f alsavol $(bindir)/
+	mkdir -p $(mandir)/man1
+	cp alsavol.1 $(mandir)/man1
 
 
 

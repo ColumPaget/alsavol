@@ -11,17 +11,25 @@ static int InitConfig()
     if (! AppConfig) AppConfig=(TConfig *) calloc(1, sizeof(TConfig));
     AppConfig->WindowWide=35;
     AppConfig->WindowHigh=1;
+    AppConfig->VolumeDelta=3;
     AppConfig->DisplayType=UI_GuessDisplayType();
     AppConfig->CardIgnoreList=CopyStr(AppConfig->CardIgnoreList, "hw,oss,shm,arcam_av,sysdefault,default");
     AppConfig->CardSettings=ListCreate();
     AppConfig->TextColor=CopyStr(AppConfig->TextColor, "");
     AppConfig->GaugeBarColor=CopyStr(AppConfig->GaugeBarColor, "blue");
     AppConfig->GaugeTextColor=CopyStr(AppConfig->GaugeTextColor, "yellow");
-    AppConfig->TerminalApp=CopyStr(AppConfig->TerminalApp, "urxvt,aterm,xterm,mlterm,st");
+    AppConfig->TerminalApp=CopyStr(AppConfig->TerminalApp, "aterm,urxvt,xterm,mlterm,st");
     AppConfig->ConfigFile=MCopyStr(AppConfig->ConfigFile, GetCurrUserHomeDir(), "/.config/alsavol.conf", NULL);
 
 }
 
+
+static ParseCommandLineSetTerminalApp(const char *Terms)
+{
+        AppConfig->DisplayType=DISPLAYTYPE_POPUP_TERM;
+        AppConfig->TerminalApp=CopyStr(AppConfig->TerminalApp, Terms);
+}
+ 
 
 static void ParseCommandLineDisplayType(const char *Type)
 {
@@ -38,11 +46,11 @@ static void ParseCommandLineDisplayType(const char *Type)
     else if (strcmp(Type, "terminal")==0) AppConfig->DisplayType=DISPLAYTYPE_TERMINAL;
     else if (strcmp(Type, "wish")==0) AppConfig->DisplayType=DISPLAYTYPE_WISH;
     else if (strcmp(Type, "tcl")==0) AppConfig->DisplayType=DISPLAYTYPE_WISH;
-    else if (strcmp(Type, "urxvt")==0)
-    {
-        AppConfig->DisplayType=DISPLAYTYPE_POPUP_TERM;
-        AppConfig->TerminalApp=CopyStr(AppConfig->TerminalApp, "urxvt,aterm,st,xterm,mlterm");
-    }
+    else if (strcmp(Type, "urxvt")==0) ParseCommandLineSetTerminalApp("urxvt");
+    else if (strcmp(Type, "aterm")==0) ParseCommandLineSetTerminalApp("aterm");
+    else if (strcmp(Type, "xterm")==0) ParseCommandLineSetTerminalApp("xterm");
+    else if (strcmp(Type, "mlterm")==0) ParseCommandLineSetTerminalApp("mlterm");
+    else if (strcmp(Type, "st")==0) ParseCommandLineSetTerminalApp("st");
 }
 
 static void ParseCommandLineDisplayStyle(const char *Type)
@@ -116,6 +124,8 @@ static void ReadConfigFileParseSettings(ListNode *Settings)
     p_Value=ParserGetValue(Settings, "PopupFlags");
     if (StrValid(p_Value)) ReadConfigFileParsePopupFlags(p_Value);
 
+    p_Value=ParserGetValue(Settings, "VolumeDelta");
+    if (StrValid(p_Value)) AppConfig->VolumeDelta=atoi(p_Value);
 
     p_Value=ParserGetValue(Settings, "WindowX");
     if (StrValid(p_Value))
@@ -201,6 +211,9 @@ int ParseCommandLine(int argc, char *argv[])
         else if (strcmp(arg, "-p")==0) Act=ACT_PERSIST;
         else if (strcmp(arg, "-persist")==0) Act=ACT_PERSIST;
         else if (strcmp(arg, "-t")==0) ParseCommandLineDisplayType(CommandLineNext(Cmd));
+        else if (strcmp(arg, "-T")==0) ParseCommandLineSetTerminalApp(CommandLineNext(Cmd));
+        else if (strcmp(arg, "-term")==0) ParseCommandLineSetTerminalApp(CommandLineNext(Cmd));
+        else if (strcmp(arg, "-delta")==0) AppConfig->VolumeDelta=atoi(CommandLineNext(Cmd));
         else if (strcmp(arg, "-s")==0) ParseCommandLineDisplayStyle(CommandLineNext(Cmd));
         else if (strcmp(arg, "-style")==0) ParseCommandLineDisplayStyle(CommandLineNext(Cmd));
         else if (strcmp(arg, "-above")==0) AppConfig->Flags |= DISPLAYFLAG_ABOVE;
@@ -229,7 +242,6 @@ int ParseCommandLine(int argc, char *argv[])
         else if (strcmp(arg, "-h")==0) AppConfig->WindowHigh = atoi(CommandLineNext(Cmd));
         else if (strcmp(arg, "-wide")==0) AppConfig->WindowWide = atoi(CommandLineNext(Cmd));
         else if (strcmp(arg, "-high")==0) AppConfig->WindowHigh = atoi(CommandLineNext(Cmd));
-        else if (strcmp(arg, "-term")==0) AppConfig->TerminalApp=CopyStr(AppConfig->TerminalApp, CommandLineNext(Cmd));
         else if (strcmp(arg, "-hotkey")==0) AppConfig->PopupHotKey=CopyStr(AppConfig->PopupHotKey, CommandLineNext(Cmd));
         else if (strcmp(arg, "-fg")==0) AppConfig->TextColor=CopyStr(AppConfig->TextColor, CommandLineNext(Cmd));
         else if (strcmp(arg, "-textcolor")==0) AppConfig->TextColor=CopyStr(AppConfig->TextColor, CommandLineNext(Cmd));

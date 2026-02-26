@@ -195,14 +195,14 @@ ListNode *InteractiveProcessUIAction(ListNode *Curr, int Act, int Value, STREAM 
         break;
 
     case UI_ACT_DECR:
-        AdjustAmount=(VolCtl->Max - VolCtl->Min) / 20;
+        AdjustAmount=(VolCtl->Max - VolCtl->Min) * AppConfig->VolumeDelta / 100;
         if (AdjustAmount < 1) AdjustAmount=1;
         if (VolCtl) SoundControlSetValue(Card, VolCtl, VolCtl->Values[0] - AdjustAmount);
         Change=TRUE;
         break;
 
     case UI_ACT_INCR:
-        AdjustAmount=(VolCtl->Max - VolCtl->Min) / 20;
+        AdjustAmount=(VolCtl->Max - VolCtl->Min) * AppConfig->VolumeDelta / 100;
         if (AdjustAmount < 1) AdjustAmount=1;
         if (VolCtl) SoundControlSetValue(Card, VolCtl, VolCtl->Values[0] + AdjustAmount);
         if (MuteCtl) SoundControlSetValue(Card, MuteCtl, 1);

@@ -42,6 +42,12 @@ all:
 	gcc -ofmtduration.exe fmtduration.c $(LIBS)
 	gcc -ocalendar.exe calendar.c $(LIBS)
 	gcc -oLineEdit.exe LineEdit.c $(LIBS)
+	gcc -ocontainer.exe container.c $(LIBS)
+	gcc -oListLimits.exe ListLimits.c $(LIBS)
+	gcc -oexternalip.exe externalip.c $(LIBS)
+	gcc -ogeolocate.exe geolocate.c $(LIBS)
+	gcc -oipmask.exe ipmask.c $(LIBS)
+	gcc -orecurse.exe recurse.c $(LIBS)
 
 seccomp.exe: seccomp.c
 	gcc -oseccomp.exe seccomp.c $(LIBS)

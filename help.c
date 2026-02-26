@@ -14,9 +14,11 @@ void PrintHelp()
     printf("-D             debug mode, output some errors etc\n");
     printf("-debug         debug mode, output some errors etc\n");
     printf("-set <level>   set volume level\n");
+    printf("-delta <value> APPROXIMATE percentage to increase/decrease volume with up/down buttons\n");
     printf("-all           apply volume change to all sound cards\n");
     printf("-t <type>      display type, one of 'term', 'dialog', 'zenity', 'qarma', 'yad', 'wish', 'pterm'\n");
-    printf("-term <type>   terminal app to use with 'pterm' display type\n");
+    printf("-T <apps>      force 'pterm' display type, 'apps' is a list of terminal apps to search for/use\n");
+    printf("-term <apps>   force 'pterm' display type, 'apps' is a list of terminal apps to search for/use\n");
     printf("-s <name>      display style, one of 'basic', '1line', '2line', 'compact' and 'pterm'\n");
     printf("-style <name>  display style, one of 'basic', '1line', '2line', 'compact' and 'pterm'\n");
     printf("-x <pos>       x-position of display window\n");
