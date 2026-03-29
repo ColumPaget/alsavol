@@ -78,8 +78,7 @@ STREAM *PopupTerminal_Display(const char *TerminalApps)
 {
     char *Tempstr=NULL, *TermExec=NULL, *Cmd=NULL, *Token=NULL;
     const char *ptr;
-    STREAM *S;
-    int i;
+    STREAM *S=NULL;
 
     ptr=GetToken(TerminalApps, ",", &Token, 0);
     while (ptr)
@@ -103,6 +102,11 @@ STREAM *PopupTerminal_Display(const char *TerminalApps)
         Cmd=MCatStr(Cmd, " ", Tempstr, " -e ", SelfPath, " -t x11term ", NULL);
         if (StrValid(AppConfig->TextColor)) Cmd=MCatStr(Cmd, " -textcolor '", AppConfig->TextColor, "'", NULL);
         if (AppConfig->Flags & DISPLAYFLAG_BORDERLESS) Cmd=CatStr(Cmd, " -style 1line");
+        if (AppConfig->Timeout > 0) 
+				{
+					Tempstr=FormatStr(Tempstr, " -timeout %d", AppConfig->Timeout);
+					Cmd=CatStr(Cmd, Tempstr);
+				}
 
 
         printf("%s\n", Cmd);

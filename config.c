@@ -21,10 +21,11 @@ static int InitConfig()
     AppConfig->TerminalApp=CopyStr(AppConfig->TerminalApp, "aterm,urxvt,xterm,mlterm,st");
     AppConfig->ConfigFile=MCopyStr(AppConfig->ConfigFile, GetCurrUserHomeDir(), "/.config/alsavol.conf", NULL);
 
+return(TRUE);
 }
 
 
-static ParseCommandLineSetTerminalApp(const char *Terms)
+static void ParseCommandLineSetTerminalApp(const char *Terms)
 {
         AppConfig->DisplayType=DISPLAYTYPE_POPUP_TERM;
         AppConfig->TerminalApp=CopyStr(AppConfig->TerminalApp, Terms);
@@ -141,6 +142,10 @@ static void ReadConfigFileParseSettings(ListNode *Settings)
         AppConfig->Flags |= DISPLAYFLAG_POSITION;
     }
 
+    p_Value=ParserGetValue(Settings, "AppTimeout");
+    if (StrValid(p_Value)) AppConfig->Timeout=atoi(p_Value);
+
+
 }
 
 
@@ -170,6 +175,7 @@ int ReadConfigFile(const char *Path)
 {
     ListNode *Config=NULL, *Curr;
     char *Tempstr=NULL;
+		int RetVal=FALSE;
     STREAM *S;
 
     if (! AppConfig) InitConfig();
@@ -179,6 +185,7 @@ int ReadConfigFile(const char *Path)
     {
         Tempstr=STREAMReadDocument(Tempstr, S);
         STREAMClose(S);
+				RetVal=TRUE;
 
         Config=ParserParseDocument("ini", Tempstr);
         Curr=ListGetNext(Config);
@@ -191,6 +198,8 @@ int ReadConfigFile(const char *Path)
     }
 
     Destroy(Tempstr);
+
+return(RetVal);
 }
 
 
@@ -199,7 +208,6 @@ int ParseCommandLine(int argc, char *argv[])
     int Act=ACT_INTERACT;
     CMDLINE *Cmd;
     const char *arg;
-    int i;
 
     if (! AppConfig) InitConfig();
 
@@ -242,6 +250,7 @@ int ParseCommandLine(int argc, char *argv[])
         else if (strcmp(arg, "-h")==0) AppConfig->WindowHigh = atoi(CommandLineNext(Cmd));
         else if (strcmp(arg, "-wide")==0) AppConfig->WindowWide = atoi(CommandLineNext(Cmd));
         else if (strcmp(arg, "-high")==0) AppConfig->WindowHigh = atoi(CommandLineNext(Cmd));
+        else if (strcmp(arg, "-timeout")==0) AppConfig->Timeout = atoi(CommandLineNext(Cmd));
         else if (strcmp(arg, "-hotkey")==0) AppConfig->PopupHotKey=CopyStr(AppConfig->PopupHotKey, CommandLineNext(Cmd));
         else if (strcmp(arg, "-fg")==0) AppConfig->TextColor=CopyStr(AppConfig->TextColor, CommandLineNext(Cmd));
         else if (strcmp(arg, "-textcolor")==0) AppConfig->TextColor=CopyStr(AppConfig->TextColor, CommandLineNext(Cmd));

@@ -33,6 +33,7 @@ int Xpos;
 int Ypos;
 int WindowWide;
 int WindowHigh;
+int Timeout;
 char *ConfigFile;
 char *TargetCard;
 char *CardIgnoreList;

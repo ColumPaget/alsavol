@@ -34,6 +34,11 @@ OPTIONS
 =======
 
 
+-I <list>             comma separated list of card names to NOT display
+-fg <color>           foreground text color
+-textcolor <color>    foreground text color
+
+
 -d
 : print a list of available devices and their controls
 -f <path>
@@ -54,6 +59,14 @@ OPTIONS
 : apply volume change to all sound cards
 -delta <value> 
 : APPROXIMATE percentage to increase/decrease volume with up/down buttons
+-ignore <list>
+: comma separated list of card names to NOT display
+-I <list>
+: comma separated list of card names to NOT display
+-order <list>
+: comma separated list of card names to display, in the specified order
+-O <list>
+: comma separated list of card names to display, in the specified order
 -t <type>
 : display type, one of 'term', 'dialog', 'zenity', 'qarma', 'yad', 'wish', 'pterm'
 -T <apps>
@@ -82,10 +95,14 @@ OPTIONS
 : borderless: only for 'pterm' displays using st, mlterm or aterm
 -above
 : set window to be above other windows
+-sticky
+: set window to display on all desktops
 -p
 : persist. Respawn if window is closed, mostly for use with pterm display type
 -persist
 : persist. Respawn if window is closed, mostly for use with pterm display type
+-timeout <seconds>
+: timeout after which app shuts down if no user input (only for terminal mode).
 -hotkey <key>
 : popup hotkey for use with the 'urxvt' display type
 -font <name>
@@ -110,6 +127,7 @@ OPTIONS
 : this help
 --help
 : this help
+
 
 
 CONFIG FILE
@@ -188,6 +206,10 @@ GaugeTextColor=<color>
 
 VolumeDelta=<value>
 : APPROXIMATE percentage to increase/decrease volume with up/down buttons
+
+AppTimeout=<seconds>
+: Timeout in seconds after which the app will shut down if there's no user input.
+
 
 
 ## Options in a Sound card Stanza of the config file

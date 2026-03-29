@@ -127,8 +127,8 @@ void WMCtrlReconfigureWindow(const char *PeerPID, int Flags)
 
         if (Flags & DISPLAYFLAG_POSITION)
         {
-            WMCtrlGetDesktopAvailable(WMCtrlPath, &deskwide, &deskhigh);
-
+            if (WMCtrlGetDesktopAvailable(WMCtrlPath, &deskwide, &deskhigh))
+						{
             x=AppConfig->Xpos;
             wide=300;
             if (x < 0) x=deskwide - wide - x - 4;
@@ -139,6 +139,7 @@ void WMCtrlReconfigureWindow(const char *PeerPID, int Flags)
 
             Tempstr=FormatStr(Tempstr, " -e 0,%d,%d,300,100", x, y);
             Cmd=CatStr(Cmd, Tempstr);
+						}
         }
 
         system(Cmd);

@@ -1,4 +1,4 @@
-AC_INIT([alsavol],[1.2])
+AC_INIT([alsavol],[1.3])
 
 
 dnl define a function we can use to check if a compiler flag
@@ -26,6 +26,25 @@ AC_CHECK_INCLUDES_DEFAULT
 AC_PROG_EGREP
 
 AC_SYS_LARGEFILE
+
+AC_ARG_ENABLE([wall],
+    [AS_HELP_STRING([--enable-wall], [use -Wall to get maximum compile warnings (default=no)])],
+    [cf_use_wall=$enableval],
+    [cf_use_wall=no]
+)
+AS_IF([test "$cf_use_wall" = "yes"], [
+    CFLAGS="$CFLAGS -Wall"
+])
+
+
+AC_ARG_ENABLE([werror],
+    [AS_HELP_STRING([--enable-werror], [treat compile warnings as errors (default=no)])],
+    [cf_use_werror=$enableval],
+    [cf_use_werror=no]
+)
+AS_IF([test "$cf_use_werror" = "yes"], [
+    CFLAGS="$CFLAGS -Werror"
+])
 
 
 AC_CHECK_LIB([asound], [snd_ctl_open])

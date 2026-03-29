@@ -285,13 +285,14 @@ static int SoundCardControlsGet(TSoundCard *Card)
     }
 
     Destroy(Tempstr);
+
+return(TRUE);
 }
 
 
 TSoundCard *SoundCardCreate(ListNode *CardList, const char *ID, const char *Name)
 {
     TSoundCard *Card=NULL;
-    int result;
 
     if (! StrValid(Name)) return(NULL);
     if (! InStringList(ID, AppConfig->CardIgnoreList, ","))
@@ -406,10 +407,8 @@ ListNode *SoundCardsReorder(ListNode *Cards)
 
 ListNode *SoundCardsLoad()
 {
-    TSoundCard *Card;
     ListNode *CardList;
     char *ID=NULL, *Name=NULL;
-    int i;
 
 
 //must set cardno -1 so that 'snd_card_next' returns
@@ -472,6 +471,7 @@ int SoundControlSetValue(TSoundCard *Card, TSoundCtl *Ctl, int Value)
     }
 
     Destroy(Tempstr);
+return(TRUE);
 }
 
 
@@ -492,6 +492,8 @@ int SoundControlToggleValue(TSoundCard *Card, TSoundCtl *Ctl)
     }
 
     Destroy(Tempstr);
+
+return(TRUE);
 }
 
 

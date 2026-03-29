@@ -25,7 +25,7 @@ static char *TCLWishFormatPosition(char *RetStr, int x, int y)
 
 STREAM *TCLWishUI_Display(TSoundCard *Card, TSoundCtl *VolCtl, TSoundCtl *MuteCtl)
 {
-    STREAM *S;
+    STREAM *S=NULL;
     char *Exec=NULL, *Tempstr=NULL, *Cmd=NULL;
     int percent;
 

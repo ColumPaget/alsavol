@@ -72,8 +72,6 @@ STREAM *ZenityUI_Display(TSoundCard *Card, TSoundCtl *VolCtl, TSoundCtl *MuteCtl
 {
     char *Exec=NULL, *Tempstr=NULL, *WMCtrl=NULL, *Title=NULL;
     STREAM *S=NULL;
-    int i;
-
 
     Exec=ZenityUI_FindExec(Exec, Type);
 

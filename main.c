@@ -4,6 +4,7 @@
 #include "ui.h"
 
 int ExitRequested=FALSE;
+time_t LastEvent=0;
 char *SelfPath=NULL;
 
 void SigHandler(int Sig)
@@ -231,17 +232,28 @@ ListNode *InteractiveProcessUIAction(ListNode *Curr, int Act, int Value, STREAM 
 }
 
 
+static int InteractiveExitRequired(int LastEvent)
+{
+ 
+if (ExitRequested==TRUE) return(TRUE);
+
+if ( (AppConfig->Timeout > 0) && (LastEvent > 0) )
+{
+if ( (time(NULL) - LastEvent) > AppConfig->Timeout) return(TRUE);
+}
+
+return(FALSE);
+}
 
 
 void Interactive(ListNode *Cards)
 {
     TSoundCard *Card=NULL;
     TSoundCtl *VolCtl=NULL, *MuteCtl=NULL;
-    char *Tempstr=NULL;
     STREAM *InputS=NULL;
     ListNode *Curr, *Prev;
-    int Act;
-    int Change=TRUE, Value;
+    int Act=UI_ACT_NONE;
+    int Value;
 
     if (! Cards) return;
 
@@ -253,17 +265,19 @@ void Interactive(ListNode *Cards)
     signal(SIGTERM, SigHandler);
 
     GetCurrCardAndControls(Curr, &Card, &VolCtl, &MuteCtl);
+		LastEvent=time(NULL);
 
     InputS=UI_Display(NULL, VolCtl->Card, VolCtl, MuteCtl);
     if (InputS)
     {
         while (Act != UI_ACT_QUIT)
         {
-            if (ExitRequested==TRUE) break;
+						if (InteractiveExitRequired(LastEvent)) break;
             Act=UI_HandleInput(InputS, &Value);
 
             if (Act != UI_ACT_NONE)
             {
+								LastEvent=time(NULL);
                 Prev=Curr;
 
                 Curr=InteractiveProcessUIAction(Curr, Act, Value, InputS);
@@ -285,7 +299,6 @@ void DumpControls(TSoundCard *Card)
 {
     ListNode *Curr;
     TSoundCtl *Ctl=NULL;
-    char *Tempstr=NULL;
 
     printf("%s\n", Card->Name);
     Curr=ListGetNext(Card->Controls);
@@ -302,8 +315,6 @@ void DumpDevices(ListNode *Cards)
 {
     ListNode *Curr;
     TSoundCard *Card=NULL;
-    TSoundCtl *Ctl=NULL;
-    char *Tempstr=NULL;
 
     Curr=ListGetNext(Cards);
     while (Curr)
@@ -314,6 +325,7 @@ void DumpDevices(ListNode *Cards)
     }
 }
 
+
 void SetVolumeAction(ListNode *Cards)
 {
     ListNode *Curr;
@@ -322,11 +334,7 @@ void SetVolumeAction(ListNode *Cards)
     {
         if (isnum(AppConfig->TargetCard)) Curr=ListGetNth(Cards, atoi(AppConfig->TargetCard));
         else Curr=ListFindNamedItem(Cards, AppConfig->TargetCard);
-        if (Curr)
-        {
-            SoundCardSet(Curr);
-            fprintf(stderr, "Set Volume: [%s] %d\n", AppConfig->TargetCard, Curr);
-        }
+        if (Curr) SoundCardSet(Curr);
         else fprintf(stderr, "NO SUCH CARD: [%s]\n", AppConfig->TargetCard);
     }
     else if (AppConfig->Flags & FLAG_SET_ALL)  SoundCardsSet(Cards);
@@ -357,7 +365,7 @@ STREAM *DoLockFile()
 
 int main(int argc, char *argv[])
 {
-    ListNode *Cards, *Curr;
+    ListNode *Cards;
     char *Tempstr=NULL;
     int Act;
 
@@ -383,7 +391,7 @@ int main(int argc, char *argv[])
         SetVolumeAction(Cards);
         break;
     case ACT_PERSIST:
-        while (! ExitRequested) Interactive(Cards);
+				while (! InteractiveExitRequired(LastEvent)) Interactive(Cards);
         break;
     default:
         Interactive(Cards);
